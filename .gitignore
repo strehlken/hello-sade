@@ -1,0 +1,9 @@
+.DS_Store
+**/.DS_Store
+*.swp
+*.bak
+.vscode/
+.idea/
+
+# Source script — not deployed
+mothers-day.md

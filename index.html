@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hello, Sade — A Mother's Day Transmission</title>
+<meta name="description" content="An incoming transmission from the distant future, for Sade. Mother's Day 2026.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='34' rx='22' ry='6' fill='%234a6e73'/%3E%3Cellipse cx='32' cy='30' rx='14' ry='10' fill='%23c2a878'/%3E%3Ccircle cx='32' cy='28' r='4' fill='%23f7f8fa'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --bg-warm: #f4f1ea;
+    --ink: #232324;
+    --ink-soft: #5a5a5e;
+    --ink-faint: #8b8d94;
+    --hairline: #e3e6ec;
+    --surface: #ffffff;
+    --alien: #4a6e73;
+    --alien-soft: #6a8d92;
+    --rose: #b85c5c;
+    --gold: #c2a878;
+    --shadow-sm: 0 1px 2px rgba(35, 35, 36, 0.06), 0 2px 8px rgba(35, 35, 36, 0.04);
+    --shadow-md: 0 4px 12px rgba(35, 35, 36, 0.08), 0 12px 32px rgba(35, 35, 36, 0.06);
+    --shadow-lg: 0 10px 30px rgba(35, 35, 36, 0.10), 0 30px 60px rgba(35, 35, 36, 0.08);
+    --sans: 'Brandon Grotesque', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    --serif: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --hand: 'Caveat', 'Brush Script MT', cursive;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(194, 168, 120, 0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(74, 110, 115, 0.06) 0%, transparent 55%),
+      var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Subtle film grain overlay */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.14 0 0 0 0 0.14 0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* === HUD === */
+  .hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .hud-left, .hud-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--rose);
+    animation: rec-pulse 1.6s infinite;
+  }
+
+  @keyframes rec-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* === DECK === */
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 32px 120px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s linear 0.5s;
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s, visibility 0s linear 0s;
+  }
+
+  .slide-inner {
+    max-width: 880px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    text-align: center;
+  }
+
+  /* Voice labels */
+  .voice {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--alien);
+    margin-bottom: -4px;
+  }
+
+  .voice.kid-sloane { color: var(--rose); }
+  .voice.kid-harry { color: var(--gold); filter: brightness(0.85); }
+
+  /* Alien narration */
+  .narration {
+    font-family: var(--serif);
+    font-size: 1.45rem;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--ink);
+    max-width: 680px;
+    font-variation-settings: "opsz" 32;
+  }
+
+  .narration em {
+    font-style: italic;
+    color: var(--alien);
+  }
+
+  .narration.lead {
+    font-size: 1.7rem;
+    line-height: 1.45;
+  }
+
+  .small-line {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    max-width: 600px;
+    margin-top: 6px;
+  }
+
+  /* Kid quotes */
+  .quote {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    max-width: 640px;
+  }
+
+  .quote-text {
+    font-family: var(--sans);
+    font-size: 1.35rem;
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .quote-text::before { content: "\201C"; opacity: 0.35; padding-right: 4px; }
+  .quote-text::after { content: "\201D"; opacity: 0.35; padding-left: 4px; }
+
+  .quote-stack { display: flex; flex-direction: column; gap: 22px; align-items: center; }
+
+  /* Cover */
+  .cover-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144;
+  }
+
+  .cover-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .cover-meta .divider {
+    width: 32px;
+    height: 1px;
+    background: var(--ink-faint);
+    margin: 8px auto;
+    opacity: 0.6;
+  }
+
+  .ufo {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 8px;
+    animation: ufo-float 5s ease-in-out infinite;
+  }
+
+  @keyframes ufo-float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
+
+  .begin-hint {
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--alien);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: blink 2.4s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Photos */
+  .photo-frame {
+    background: var(--surface);
+    padding: 14px 14px 22px;
+    box-shadow: var(--shadow-md);
+    border-radius: 2px;
+    transition: transform 0.4s ease;
+  }
+
+  .photo-frame img {
+    display: block;
+    max-width: 100%;
+    max-height: 56vh;
+    width: auto;
+    height: auto;
+    border-radius: 1px;
+  }
+
+  .photo-frame .caption {
+    font-family: var(--hand);
+    font-size: 1.4rem;
+    line-height: 1.2;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .photo-row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .photo-row .photo-frame {
+    flex: 0 1 auto;
+    max-width: 280px;
+  }
+
+  .photo-row .photo-frame img {
+    max-height: 38vh;
+  }
+
+  .photo-row.tilt .photo-frame:nth-child(1) { transform: rotate(-2deg); }
+  .photo-row.tilt .photo-frame:nth-child(2) { transform: rotate(1deg); }
+  .photo-row.tilt .photo-frame:nth-child(3) { transform: rotate(-1deg); }
+
+  .photo-row.tilt .photo-frame:hover {
+    transform: rotate(0) scale(1.02);
+    z-index: 2;
+  }
+
+  /* Vacuum saga: stacked mini-captioned trio */
+  .saga {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .saga-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .saga-step .photo-frame { max-width: 360px; }
+  .saga-step .photo-frame img { max-height: 36vh; }
+
+  .saga-step .saga-caption {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--ink);
+    max-width: 460px;
+  }
+
+  /* Closing */
+  .closing-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .closing-title .accent { color: var(--rose); }
+
+  .signature {
+    font-family: var(--hand);
+    font-size: 2rem;
+    color: var(--ink);
+    margin-top: 14px;
+    line-height: 1.3;
+  }
+
+  .signature .small {
+    display: block;
+    font-size: 1rem;
+    font-family: var(--mono);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 18px;
+  }
+
+  .heart {
+    display: inline-block;
+    color: var(--rose);
+    transform: translateY(2px);
+  }
+
+  /* === CONTROLS === */
+  .controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px 22px;
+    z-index: 60;
+    pointer-events: none;
+  }
+
+  .nav-btn {
+    pointer-events: auto;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    min-width: 100px;
+  }
+
+  .nav-btn:hover {
+    color: var(--alien);
+    border-color: var(--alien-soft);
+    transform: translateY(-1px);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .dots {
+    pointer-events: auto;
+    display: flex;
+    gap: 6px;
+    background: var(--surface);
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--hairline);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .dot:hover { background: var(--alien-soft); }
+  .dot.active {
+    background: var(--alien);
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    .hud { padding: 14px 18px; font-size: 10px; }
+    .slide { padding: 70px 20px 110px; }
+    .narration { font-size: 1.2rem; }
+    .narration.lead { font-size: 1.35rem; }
+    .quote-text { font-size: 1.15rem; }
+    .photo-frame img { max-height: 48vh; }
+    .photo-row { gap: 12px; }
+    .photo-row .photo-frame { max-width: 46%; padding: 8px 8px 14px; }
+    .photo-row .photo-frame .caption { font-size: 1.05rem; }
+    .controls { padding: 14px 18px 18px; }
+    .nav-btn { padding: 10px 14px; min-width: 80px; font-size: 10px; }
+    .dots { padding: 8px 10px; }
+    .dot { width: 5px; height: 5px; }
+    .saga-step .photo-frame { max-width: 90%; }
+  }
+
+  @media (max-height: 620px) {
+    .slide { padding-top: 60px; padding-bottom: 100px; }
+    .photo-frame img { max-height: 44vh; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .slide, .nav-btn, .dot, .photo-frame, .ufo, .rec-dot, .begin-hint {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  /* Print: hide controls */
+  @media print {
+    .hud, .controls { display: none; }
+    .slide { position: relative; opacity: 1; visibility: visible; page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hud">
+  <div class="hud-left">
+    <span class="rec-dot" aria-hidden="true"></span>
+    <span>Transmission &middot; Mother's Day 2026</span>
+  </div>
+  <div class="hud-right">
+    <span id="counter">01 / 18</span>
+  </div>
+</header>
+
+<main class="deck" id="deck">
+
+  <!-- 1. Cover -->
+  <section class="slide active" data-slide="1">
+    <div class="slide-inner">
+      <svg class="ufo" viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <radialGradient id="beam" cx="50%" cy="0%" r="80%">
+            <stop offset="0%" stop-color="#c2a878" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#c2a878" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <path d="M 60 60 L 24 105 L 96 105 Z" fill="url(#beam)"/>
+        <ellipse cx="60" cy="62" rx="42" ry="9" fill="#4a6e73"/>
+        <ellipse cx="60" cy="58" rx="42" ry="9" fill="#5b8388"/>
+        <ellipse cx="60" cy="50" rx="22" ry="14" fill="#c2a878"/>
+        <ellipse cx="60" cy="46" rx="22" ry="14" fill="#d4be96"/>
+        <circle cx="60" cy="44" r="6" fill="#f7f8fa"/>
+        <circle cx="60" cy="44" r="3" fill="#4a6e73"/>
+        <circle cx="36" cy="64" r="2" fill="#f7f8fa"/>
+        <circle cx="60" cy="66" r="2" fill="#f7f8fa"/>
+        <circle cx="84" cy="64" r="2" fill="#f7f8fa"/>
+      </svg>
+      <div class="cover-meta">
+        <span>Incoming Transmission</span>
+        <span class="divider"></span>
+        <span>Origin: Distant Future &middot; Recipient: Sade</span>
+      </div>
+      <h1 class="cover-title">Hello, Sade.</h1>
+      <p class="narration lead">
+        We are aliens from the distant future. We come in peace.
+      </p>
+      <div class="begin-hint">
+        <span>Click anywhere to begin</span>
+        <span>&rarr;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Alien intro -->
+  <section class="slide" data-slide="2">
+    <div class="slide-inner">
+      <div class="voice">Transmission &middot; Origin Unknown</div>
+      <p class="narration">
+        We came to your children and told them, <em>"Take us to your leader."</em> They directed us to you. So that's why we are here.
+      </p>
+      <p class="narration">
+        They told us that today is a special day for mothers, so we thought we would say hello before we leave.
+      </p>
+      <p class="small-line">Do not worry about why we are here. That is not important.</p>
+    </div>
+  </section>
+
+  <!-- 3. Asked children for proof -->
+  <section class="slide" data-slide="3">
+    <div class="slide-inner">
+      <div class="voice">Transmission</div>
+      <p class="narration lead">
+        We asked your children to prove that you are indeed the leader.
+      </p>
+      <p class="small-line">The following is a true and faithful transcript.</p>
+    </div>
+  </section>
+
+  <!-- 4. Kids testimony 1 -->
+  <section class="slide" data-slide="4">
+    <div class="slide-inner">
+      <div class="quote-stack">
+        <div class="quote">
+          <div class="voice kid-sloane">Sloane, age 5</div>
+          <p class="quote-text">Mama is the leader because she likes the house and likes all her kids.</p>
+        </div>
+        <div class="quote">
+          <div class="voice kid-harry">Harrison, age 4</div>
+          <p class="quote-text">Because she is the best one here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Daddy is the baddest -->
+  <section class="slide" data-slide="5">
+    <div class="slide-inner">
+      <div class="quote-stack">
+        <div class="quote">
+          <div class="voice kid-sloane">Sloane</div>
+          <p class="quote-text">Daddy is the baddest one.</p>
+        </div>
+        <div class="quote">
+          <div class="voice kid-harry">Harrison</div>
+          <p class="quote-text">Yes, daddy is the baddest one.</p>
+        </div>
+        <div class="quote">
+          <div class="voice kid-sloane">Sloane</div>
+          <p class="quote-text">Daddy is the baddest one and mama is the best one. Daddy is the baddest, baddest, baddest one and is always saying people are in trouble.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Alien redirects -->
+  <section class="slide" data-slide="6">
+    <div class="slide-inner">
+      <div class="quote-stack">
+        <div class="quote">
+          <div class="voice">Alien</div>
+          <p class="quote-text">OK &mdash; but can we please make this more about your <em>mother</em>? What makes her the leader?</p>
+        </div>
+        <div class="quote">
+          <div class="voice kid-harry">Harrison</div>
+          <p class="quote-text">Because she is the one who bought the house.</p>
+        </div>
+        <div class="quote">
+          <div class="voice kid-harry">Harrison</div>
+          <p class="quote-text">Mama is so good that even if we say <em>seaweed</em> she just says no instead of yelling.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Photo evidence intro -->
+  <section class="slide" data-slide="7">
+    <div class="slide-inner">
+      <div class="voice">Photographic Evidence</div>
+      <p class="narration lead">
+        We asked the male person and the childlings to show us photographs of the family, so we could see if Mama was really the leader.
+      </p>
+      <p class="narration"><em>We found that she is, definitely, the leader.</em></p>
+    </div>
+  </section>
+
+  <!-- 8. Medical procedure -->
+  <section class="slide" data-slide="8">
+    <div class="slide-inner">
+      <p class="narration">
+        First &mdash; the childlings seem to have come directly from her body, through a gruesome scientific experiment.
+      </p>
+      <figure class="photo-frame">
+        <img src="images/medical_procedure.jpeg" alt="Sade in the hospital just after delivery" loading="eager">
+      </figure>
+    </div>
+  </section>
+
+  <!-- 9. First became a mama -->
+  <section class="slide" data-slide="9">
+    <div class="slide-inner">
+      <p class="narration">Despite that, she seems to love them.</p>
+      <figure class="photo-frame">
+        <img src="images/first_became_a_mama.jpeg" alt="Sade with her firstborn" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <!-- 10. Birthdays -->
+  <section class="slide" data-slide="10">
+    <div class="slide-inner">
+      <p class="narration">
+        Every year she leads an elaborate ritual called <em>"Birth Day"</em> for each child &mdash; to remember the day of their science experiment.
+      </p>
+      <div class="photo-row tilt">
+        <figure class="photo-frame">
+          <img src="images/birthday-18-harry.jpeg" alt="Harrison's first birthday" loading="lazy">
+          <figcaption class="caption">Harry, 1</figcaption>
+        </figure>
+        <figure class="photo-frame">
+          <img src="images/birthday-23-sloane.jpeg" alt="Sloane's birthday" loading="lazy">
+          <figcaption class="caption">Sloane, 2</figcaption>
+        </figure>
+        <figure class="photo-frame">
+          <img src="images/birthday-26-sloane.jpeg" alt="Sloane's birthday this year" loading="lazy">
+          <figcaption class="caption">Sloane, 5</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Dutch castle -->
+  <section class="slide" data-slide="11">
+    <div class="slide-inner">
+      <p class="narration">
+        We have proof that she brought her kidling to visit other leaders, in their castle.
+      </p>
+      <figure class="photo-frame">
+        <img src="images/dutch_castle.jpeg" alt="Sade and child at a Dutch castle" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <!-- 12. Princesses & Queen -->
+  <section class="slide" data-slide="12">
+    <div class="slide-inner">
+      <p class="narration">
+        Also &mdash; her daughter is clearly a princess, which makes her a queen, according to human rules.
+      </p>
+      <div class="photo-row">
+        <figure class="photo-frame">
+          <img src="images/at_beach_with_kids.jpeg" alt="At the beach with the kids" loading="lazy">
+        </figure>
+        <figure class="photo-frame">
+          <img src="images/sloane-princess.jpeg" alt="Sloane in a princess dress" loading="lazy">
+        </figure>
+      </div>
+      <p class="small-line">
+        Queens are leaders. We searched if there was a king nearby but could not find one. The childlings shrugged. So we conclude she is <em>the</em> leader.
+      </p>
+    </div>
+  </section>
+
+  <!-- 13. Librarian / Chief of Knowledge -->
+  <section class="slide" data-slide="13">
+    <div class="slide-inner">
+      <p class="narration">
+        She is also the Chief of all Knowledge, because she is in charge of the books.
+      </p>
+      <figure class="photo-frame">
+        <img src="images/sade_librarian.jpeg" alt="Sade in her library" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <!-- 14. Vacuum saga -->
+  <section class="slide" data-slide="14">
+    <div class="slide-inner">
+      <p class="narration">
+        Remarkably, she also does a lot of the cleaning.
+      </p>
+      <div class="saga">
+        <div class="saga-step">
+          <figure class="photo-frame">
+            <img src="images/mom-as-vacuum-1.jpeg" alt="Mom vacuuming, kids underfoot" loading="lazy">
+          </figure>
+          <p class="saga-caption">When she asked the childlings to help clean, there was a rebellion. She got very angry.</p>
+        </div>
+        <div class="saga-step">
+          <figure class="photo-frame">
+            <img src="images/mom-as-vacuum-2.jpeg" alt="Mom and kids in the vacuum battle" loading="lazy">
+          </figure>
+          <p class="saga-caption">The children seem to have defeated her &mdash; but it was a friendly enough battle.</p>
+        </div>
+        <div class="saga-step">
+          <figure class="photo-frame">
+            <img src="images/mom-as-vacuum-3.jpeg" alt="Mom and kids cleaning together" loading="lazy">
+          </figure>
+          <p class="saga-caption">Now she has found ways to get their help, peacefully.</p>
+        </div>
+      </div>
+      <p class="small-line">
+        But she's definitely in charge. No question about that. You don't get rebelled against if you're not in charge.
+      </p>
+    </div>
+  </section>
+
+  <!-- 15. Nail clipping -->
+  <section class="slide" data-slide="15">
+    <div class="slide-inner">
+      <p class="narration">She also handles the grooming of the childlings.</p>
+      <figure class="photo-frame">
+        <img src="images/nail-clipping.jpeg" alt="Sade clipping a child's nails" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <!-- 16. Just a good mom -->
+  <section class="slide" data-slide="16">
+    <div class="slide-inner">
+      <p class="narration">And she just seems like a good person to have as a mom.</p>
+      <div class="photo-row">
+        <figure class="photo-frame">
+          <img src="images/the_bedroom_catastrophe.jpeg" alt="The bedroom catastrophe" loading="lazy">
+        </figure>
+        <figure class="photo-frame">
+          <img src="images/yankees_game.jpeg" alt="At the Yankees game" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17. Style -->
+  <section class="slide" data-slide="17">
+    <div class="slide-inner">
+      <p class="narration">
+        Finally &mdash; her style is perfect. So we have decided she also <em>should</em> be the leader.
+      </p>
+      <figure class="photo-frame">
+        <img src="images/style.jpeg" alt="Sade looking stylish" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <!-- 18. Closing -->
+  <section class="slide" data-slide="18">
+    <div class="slide-inner">
+      <div class="voice">End of Transmission</div>
+      <h2 class="closing-title">Happy Mother's Day,<br><span class="accent">Sade.</span></h2>
+      <p class="narration">
+        You are, by every measure we ran, the leader.
+        And the best one here. <span class="heart" aria-hidden="true">&#9829;</span>
+      </p>
+      <div class="signature">
+        From Daddy, Sloane, &amp; Harrison
+        <span class="small">&mdash; and the aliens &mdash;</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="controls" aria-label="Slide navigation">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&larr; Back</button>
+  <div class="dots" id="dots" role="tablist"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">Next &rarr;</button>
+</nav>
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const counter = document.getElementById('counter');
+  const dotsWrap = document.getElementById('dots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const deck = document.getElementById('deck');
+
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    dot.addEventListener('click', () => go(i));
+    dotsWrap.appendChild(dot);
+  });
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function update() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    dotsWrap.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = pad(current + 1) + ' / ' + pad(total);
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    nextBtn.textContent = current === total - 1 ? 'The End' : 'Next →';
+    // Reset scroll inside the active slide
+    slides[current].scrollTop = 0;
+    // Preload neighbors
+    [current + 1, current + 2].forEach(i => {
+      if (slides[i]) slides[i].querySelectorAll('img[loading="lazy"]').forEach(img => {
+        if (!img.dataset.preloaded) { img.loading = 'eager'; img.dataset.preloaded = '1'; }
+      });
+    });
+  }
+
+  function go(i) {
+    if (i < 0 || i >= total) return;
+    current = i;
+    update();
+  }
+  function next() { if (current < total - 1) go(current + 1); }
+  function prev() { if (current > 0) go(current - 1); }
+
+  // Buttons
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  // Click anywhere on the deck to advance: left third = back, rest = next.
+  // Skip clicks on interactive elements, images, and text selections.
+  deck.addEventListener('click', (e) => {
+    if (e.target.closest('a, button, input, textarea, select, .photo-frame img')) return;
+    if (window.getSelection && String(window.getSelection()).length > 0) return;
+    const x = e.clientX;
+    const w = window.innerWidth;
+    if (x < w * 0.28) prev(); else next();
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+      e.preventDefault(); prev();
+    } else if (e.key === 'Home') { go(0); }
+      else if (e.key === 'End') { go(total - 1); }
+  });
+
+  // Touch swipe
+  let touchStartX = null, touchStartY = null;
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) next(); else prev();
+    }
+    touchStartX = null;
+  }, { passive: true });
+
+  update();
+})();
+</script>
+
+</body>
+</html>
