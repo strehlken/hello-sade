@@ -8,21 +8,27 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='34' rx='22' ry='6' fill='%234a6e73'/%3E%3Cellipse cx='32' cy='30' rx='14' ry='10' fill='%23c2a878'/%3E%3Ccircle cx='32' cy='28' r='4' fill='%23f7f8fa'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500;1,9..144,600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
     --bg: #f7f8fa;
-    --bg-warm: #f4f1ea;
+    --bg-cream: #f4efe5;
+    --bg-deep: #0e1417;
+    --bg-deep-2: #15212a;
     --ink: #232324;
-    --ink-soft: #5a5a5e;
+    --ink-soft: #4a4a4f;
     --ink-faint: #8b8d94;
     --hairline: #e3e6ec;
     --surface: #ffffff;
     --alien: #4a6e73;
     --alien-soft: #6a8d92;
-    --rose: #b85c5c;
-    --gold: #c2a878;
+    --scarlet: #c5523b;
+    --gold: #b89464;
+    --plum: #7d5c8a;
+    --rose-warm: #b85c5c;
+    --on-dark: #f4efe5;
+    --on-dark-soft: rgba(244, 239, 229, 0.72);
     --shadow-sm: 0 1px 2px rgba(35, 35, 36, 0.06), 0 2px 8px rgba(35, 35, 36, 0.04);
     --shadow-md: 0 4px 12px rgba(35, 35, 36, 0.08), 0 12px 32px rgba(35, 35, 36, 0.06);
     --shadow-lg: 0 10px 30px rgba(35, 35, 36, 0.10), 0 30px 60px rgba(35, 35, 36, 0.08);
@@ -34,32 +40,26 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
+  html, body { height: 100%; overflow: hidden; }
 
   body {
     font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 18px;
+    line-height: 1.5;
     color: var(--ink);
-    background:
-      radial-gradient(ellipse at 20% 10%, rgba(194, 168, 120, 0.08) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 90%, rgba(74, 110, 115, 0.06) 0%, transparent 55%),
-      var(--bg);
+    background: var(--bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Subtle film grain overlay */
+  /* Subtle film grain over everything */
   body::after {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 1000;
-    opacity: 0.4;
+    opacity: 0.32;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.14 0 0 0 0 0.14 0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -67,20 +67,19 @@
   /* === HUD === */
   .hud {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 18px 28px;
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     color: var(--ink-faint);
     text-transform: uppercase;
     z-index: 50;
     pointer-events: none;
+    transition: color 0.4s ease;
   }
 
   .hud-left, .hud-right {
@@ -89,11 +88,13 @@
     gap: 10px;
   }
 
+  /* When current slide is dark, flip HUD to cream */
+  body.on-dark .hud { color: var(--on-dark-soft); }
+
   .rec-dot {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     border-radius: 50%;
-    background: var(--rose);
+    background: var(--scarlet);
     animation: rec-pulse 1.6s infinite;
   }
 
@@ -103,294 +104,537 @@
   }
 
   /* === DECK === */
-  .deck {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
+  .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
 
   .slide {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 32px 120px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(8px);
-    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s linear 0.5s;
+    transition: opacity 0.55s ease, transform 0.55s ease, visibility 0s linear 0.55s;
     overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--bg);
   }
-
   .slide.active {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-    transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s, visibility 0s linear 0s;
+    transition: opacity 0.55s ease 0.05s, transform 0.55s ease 0.05s, visibility 0s;
   }
 
-  .slide-inner {
-    max-width: 880px;
+  /* === LAYOUTS === */
+
+  /* Cover & finale: deep cosmic */
+  .slide.cover {
+    background:
+      radial-gradient(ellipse at 25% 20%, rgba(74, 110, 115, 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(125, 92, 138, 0.20) 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-deep-2) 100%);
+    color: var(--on-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 90px 32px 130px;
+  }
+  /* Cover star field */
+  .slide.cover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 28% 72%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 47% 23%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 64% 87%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 78% 35%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 88% 64%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 8% 56%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 38% 91%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 55% 48%, #fff 50%, transparent 51%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .slide.cover > * { position: relative; z-index: 1; }
+
+  /* Pause / text-only slide */
+  .slide.pause {
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 32px 140px;
+  }
+
+  .slide.pause .pause-inner {
+    max-width: 920px;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 28px;
+    gap: 36px;
     text-align: center;
   }
 
-  /* Voice labels */
-  .voice {
+  /* Spread: photo half + text half */
+  .slide.spread {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 100%;
+    background: var(--bg);
+  }
+  .slide.spread.flip { grid-template-columns: 1fr 1fr; }
+  .slide.spread.flip .photo-half { order: 2; }
+  .slide.spread.flip .text-half { order: 1; }
+
+  .photo-half {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-deep-2);
+    height: 100vh;
+  }
+  .photo-half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-half .photo-meta {
+    position: absolute;
+    top: 28px; right: 28px;
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--alien);
-    margin-bottom: -4px;
+    color: var(--on-dark-soft);
+    background: rgba(0, 0, 0, 0.25);
+    padding: 6px 10px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 999px;
   }
 
-  .voice.kid-sloane { color: var(--rose); }
-  .voice.kid-harry { color: var(--gold); filter: brightness(0.85); }
-
-  /* Alien narration */
-  .narration {
-    font-family: var(--serif);
-    font-size: 1.45rem;
-    line-height: 1.5;
-    font-weight: 400;
-    color: var(--ink);
-    max-width: 680px;
-    font-variation-settings: "opsz" 32;
-  }
-
-  .narration em {
-    font-style: italic;
-    color: var(--alien);
-  }
-
-  .narration.lead {
-    font-size: 1.7rem;
-    line-height: 1.45;
-  }
-
-  .small-line {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 1rem;
-    color: var(--ink-soft);
-    max-width: 600px;
-    margin-top: 6px;
-  }
-
-  /* Kid quotes */
-  .quote {
+  .text-half {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    align-items: center;
-    max-width: 640px;
+    justify-content: center;
+    padding: 90px 6vw 110px;
+    background: var(--bg-cream);
+    height: 100vh;
+    overflow-y: auto;
   }
 
-  .quote-text {
-    font-family: var(--sans);
-    font-size: 1.35rem;
-    line-height: 1.5;
-    color: var(--ink);
-    font-weight: 400;
-  }
-
-  .quote-text::before { content: "\201C"; opacity: 0.35; padding-right: 4px; }
-  .quote-text::after { content: "\201D"; opacity: 0.35; padding-left: 4px; }
-
-  .quote-stack { display: flex; flex-direction: column; gap: 22px; align-items: center; }
-
-  /* Cover */
-  .cover-title {
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: clamp(3rem, 8vw, 5.5rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    font-variation-settings: "opsz" 144;
-  }
-
-  .cover-meta {
+  .text-half .label {
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--ink-faint);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
+    color: var(--alien);
+    margin-bottom: 20px;
   }
 
+  .text-half .heading {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.0vw, 2.6rem);
+    line-height: 1.25;
+    color: var(--ink);
+    font-variation-settings: "opsz" 60;
+  }
+  .text-half .heading em {
+    font-style: italic;
+    color: var(--alien);
+  }
+  .text-half .sub {
+    margin-top: 22px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Triptych: 3 columns of photos */
+  .slide.triptych {
+    background: var(--bg-cream);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 80px 0 120px;
+    height: 100vh;
+  }
+  .slide.triptych .triptych-head,
+  .slide.triptych .triptych-foot {
+    text-align: center;
+    padding: 0 32px;
+  }
+  .slide.triptych .triptych-head {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.4vw, 2.05rem);
+    line-height: 1.3;
+    color: var(--ink);
+    max-width: 900px;
+    margin: 0 auto 22px;
+    font-variation-settings: "opsz" 60;
+  }
+  .slide.triptych .triptych-head em { font-style: italic; color: var(--alien); }
+  .slide.triptych .triptych-foot {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin: 22px auto 0;
+    line-height: 1.5;
+  }
+
+  .triptych-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    padding: 0 6px;
+    height: 100%;
+    min-height: 0;
+  }
+  .triptych-cell {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-deep-2);
+    border-radius: 2px;
+  }
+  .triptych-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .triptych-cell .cell-label {
+    position: absolute;
+    top: 18px; left: 18px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--on-dark);
+    background: rgba(0, 0, 0, 0.32);
+    padding: 6px 10px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 999px;
+  }
+
+  /* Vacuum saga: triptych with captions below each photo */
+  .slide.triptych.saga .triptych-strip {
+    grid-template-rows: 1fr auto;
+  }
+  .saga-col {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 18px;
+    min-height: 0;
+  }
+  .saga-col .saga-photo {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-deep-2);
+    min-height: 0;
+    border-radius: 2px;
+  }
+  .saga-col .saga-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .saga-col .saga-cap {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+    line-height: 1.45;
+    color: var(--ink);
+    padding: 0 8px;
+    text-align: left;
+  }
+  .saga-col .saga-cap .step {
+    display: block;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--alien);
+    margin-bottom: 8px;
+  }
+
+  /* Diptych: 2 photos with text panel */
+  .slide.diptych {
+    background: var(--bg-cream);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 80px 0 120px;
+    height: 100vh;
+  }
+  .slide.diptych .diptych-head,
+  .slide.diptych .diptych-foot {
+    text-align: center;
+    padding: 0 32px;
+  }
+  .slide.diptych .diptych-head {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.4vw, 2.05rem);
+    line-height: 1.3;
+    color: var(--ink);
+    max-width: 900px;
+    margin: 0 auto 22px;
+  }
+  .slide.diptych .diptych-head em { font-style: italic; color: var(--alien); }
+  .slide.diptych .diptych-foot {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin: 22px auto 0;
+    line-height: 1.5;
+  }
+  .diptych-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 0 6px;
+    height: 100%;
+    min-height: 0;
+  }
+  .diptych-cell {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-deep-2);
+    border-radius: 2px;
+  }
+  .diptych-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* === COMPONENTS === */
+
+  /* Cover title and meta */
+  .cover-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--on-dark-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 28px;
+  }
   .cover-meta .divider {
     width: 32px;
     height: 1px;
-    background: var(--ink-faint);
-    margin: 8px auto;
+    background: var(--on-dark-soft);
+    margin: 10px auto;
     opacity: 0.6;
+  }
+
+  .cover-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(3.4rem, 9.5vw, 7.5rem);
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--on-dark);
+    font-variation-settings: "opsz" 144;
+    margin-bottom: 36px;
+  }
+
+  .cover-tag {
+    font-family: var(--serif);
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    font-style: italic;
+    color: var(--on-dark);
+    line-height: 1.4;
+    max-width: 720px;
+    text-align: center;
+    font-weight: 300;
+    font-variation-settings: "opsz" 60;
   }
 
   .ufo {
     width: 88px;
     height: 88px;
-    margin-bottom: 8px;
+    margin-bottom: 28px;
     animation: ufo-float 5s ease-in-out infinite;
   }
-
   @keyframes ufo-float {
     0%, 100% { transform: translateY(0) rotate(-2deg); }
     50% { transform: translateY(-8px) rotate(2deg); }
   }
 
   .begin-hint {
-    margin-top: 24px;
+    margin-top: 56px;
     font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--alien);
+    color: var(--alien-soft);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     animation: blink 2.4s ease-in-out infinite;
   }
-
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
   }
 
-  /* Photos */
-  .photo-frame {
-    background: var(--surface);
-    padding: 14px 14px 22px;
-    box-shadow: var(--shadow-md);
-    border-radius: 2px;
-    transition: transform 0.4s ease;
+  /* Voice labels and quote presentation */
+  .voice {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--alien);
   }
+  .voice.kid-sloane  { color: var(--plum); }
+  .voice.kid-harry   { color: var(--gold); }
+  .voice.kid-scarlett { color: var(--scarlet); }
 
-  .photo-frame img {
-    display: block;
-    max-width: 100%;
-    max-height: 56vh;
-    width: auto;
-    height: auto;
-    border-radius: 1px;
+  /* Pause-slide narration (alien voice) */
+  .narration {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 2.6vw, 2.3rem);
+    line-height: 1.35;
+    color: var(--ink);
+    max-width: 880px;
+    font-variation-settings: "opsz" 60;
   }
+  .narration.lead {
+    font-size: clamp(2.0rem, 3.2vw, 2.8rem);
+    line-height: 1.25;
+  }
+  .narration em { font-style: italic; color: var(--alien); }
 
-  .photo-frame .caption {
-    font-family: var(--hand);
-    font-size: 1.4rem;
-    line-height: 1.2;
+  .small-line {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.6vw, 1.35rem);
     color: var(--ink-soft);
-    margin-top: 10px;
-    text-align: center;
+    max-width: 720px;
+    line-height: 1.5;
   }
 
-  .photo-row {
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  .photo-row .photo-frame {
-    flex: 0 1 auto;
-    max-width: 280px;
-  }
-
-  .photo-row .photo-frame img {
-    max-height: 38vh;
-  }
-
-  .photo-row.tilt .photo-frame:nth-child(1) { transform: rotate(-2deg); }
-  .photo-row.tilt .photo-frame:nth-child(2) { transform: rotate(1deg); }
-  .photo-row.tilt .photo-frame:nth-child(3) { transform: rotate(-1deg); }
-
-  .photo-row.tilt .photo-frame:hover {
-    transform: rotate(0) scale(1.02);
-    z-index: 2;
-  }
-
-  /* Vacuum saga: stacked mini-captioned trio */
-  .saga {
+  /* Quote stack — pull-quote treatment */
+  .quote-stack {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 44px;
     align-items: center;
     width: 100%;
   }
-
-  .saga-step {
+  .quote {
     display: flex;
     flex-direction: column;
+    gap: 14px;
     align-items: center;
-    gap: 10px;
+    max-width: 820px;
+    text-align: center;
+  }
+  .quote .voice { letter-spacing: 0.28em; }
+  .quote-text {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.0vw, 2.7rem);
+    line-height: 1.25;
+    color: var(--ink);
+    font-variation-settings: "opsz" 60;
+    position: relative;
+  }
+  .quote-text em { font-style: italic; }
+  .quote-text::before {
+    content: "\201C";
+    font-family: var(--serif);
+    color: var(--ink-faint);
+    opacity: 0.45;
+    margin-right: 4px;
+  }
+  .quote-text::after {
+    content: "\201D";
+    font-family: var(--serif);
+    color: var(--ink-faint);
+    opacity: 0.45;
+    margin-left: 4px;
   }
 
-  .saga-step .photo-frame { max-width: 360px; }
-  .saga-step .photo-frame img { max-height: 36vh; }
+  .pause-section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--alien);
+  }
 
-  .saga-step .saga-caption {
+  /* Closing finale typographic moment */
+  .finale-title {
     font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(4.5rem, 14vw, 11rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    color: var(--on-dark);
+    font-variation-settings: "opsz" 144;
+    margin: 30px 0 50px;
+    text-align: center;
+  }
+  .finale-title .accent { color: var(--scarlet); font-style: italic; }
+
+  .finale-context {
+    font-family: var(--serif);
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
     font-style: italic;
-    font-size: 1rem;
+    color: var(--on-dark);
     line-height: 1.4;
-    color: var(--ink);
-    max-width: 460px;
+    max-width: 760px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 300;
   }
-
-  /* Closing */
-  .closing-title {
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: clamp(2.4rem, 6vw, 4rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-
-  .closing-title .accent { color: var(--rose); }
 
   .signature {
     font-family: var(--hand);
-    font-size: 2rem;
-    color: var(--ink);
+    font-size: clamp(2rem, 3.4vw, 3rem);
+    color: var(--on-dark);
+    line-height: 1.2;
+    text-align: center;
     margin-top: 14px;
-    line-height: 1.3;
   }
-
   .signature .small {
     display: block;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-family: var(--mono);
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-top: 18px;
+    color: var(--on-dark-soft);
+    margin-top: 24px;
+    font-style: normal;
   }
-
   .heart {
     display: inline-block;
-    color: var(--rose);
-    transform: translateY(2px);
+    color: var(--scarlet);
+    transform: translateY(-2px);
   }
 
   /* === CONTROLS === */
   .controls {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -415,13 +659,11 @@
     transition: all 0.2s ease;
     min-width: 100px;
   }
-
   .nav-btn:hover {
     color: var(--alien);
     border-color: var(--alien-soft);
     transform: translateY(-1px);
   }
-
   .nav-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
@@ -437,19 +679,19 @@
     border-radius: 999px;
     border: 1px solid var(--hairline);
     box-shadow: var(--shadow-sm);
+    max-width: 60vw;
+    overflow-x: auto;
   }
-
   .dot {
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--hairline);
     border: none;
     padding: 0;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
   }
-
   .dot:hover { background: var(--alien-soft); }
   .dot.active {
     background: var(--alien);
@@ -457,41 +699,78 @@
     border-radius: 3px;
   }
 
-  /* Responsive */
-  @media (max-width: 720px) {
+  /* === RESPONSIVE === */
+  @media (max-width: 820px) {
+    body { font-size: 17px; }
     .hud { padding: 14px 18px; font-size: 10px; }
-    .slide { padding: 70px 20px 110px; }
-    .narration { font-size: 1.2rem; }
-    .narration.lead { font-size: 1.35rem; }
-    .quote-text { font-size: 1.15rem; }
-    .photo-frame img { max-height: 48vh; }
-    .photo-row { gap: 12px; }
-    .photo-row .photo-frame { max-width: 46%; padding: 8px 8px 14px; }
-    .photo-row .photo-frame .caption { font-size: 1.05rem; }
     .controls { padding: 14px 18px 18px; }
     .nav-btn { padding: 10px 14px; min-width: 80px; font-size: 10px; }
     .dots { padding: 8px 10px; }
-    .dot { width: 5px; height: 5px; }
-    .saga-step .photo-frame { max-width: 90%; }
+
+    .slide.cover, .slide.cover.finale { padding: 90px 22px 110px; }
+    .slide.pause { padding: 90px 22px 120px; }
+    .quote-stack { gap: 30px; }
+
+    /* Spread → stack on mobile */
+    .slide.spread, .slide.spread.flip {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      height: auto;
+      min-height: 100vh;
+    }
+    .slide.spread.flip .photo-half { order: 1; }
+    .slide.spread.flip .text-half { order: 2; }
+    .photo-half { height: 60vh; }
+    .text-half {
+      height: auto;
+      padding: 50px 24px 110px;
+    }
+    .text-half .heading { font-size: clamp(1.55rem, 5.2vw, 2.05rem); }
+
+    /* Triptych → vertical stack */
+    .slide.triptych, .slide.diptych {
+      height: auto;
+      min-height: 100vh;
+      padding: 90px 0 120px;
+    }
+    .triptych-strip,
+    .diptych-strip {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      gap: 12px;
+      padding: 0 12px;
+    }
+    .triptych-cell, .diptych-cell, .saga-col .saga-photo {
+      height: 50vh;
+      min-height: 360px;
+    }
+    .saga-col {
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .saga-col .saga-cap { padding: 0 4px; font-size: 1.1rem; }
+
+    .slide.triptych .triptych-head,
+    .slide.diptych .diptych-head {
+      font-size: clamp(1.4rem, 4.2vw, 1.85rem);
+      padding: 0 22px;
+    }
+    .slide.triptych .triptych-foot,
+    .slide.diptych .diptych-foot {
+      padding: 18px 22px 0;
+    }
   }
 
-  @media (max-height: 620px) {
-    .slide { padding-top: 60px; padding-bottom: 100px; }
-    .photo-frame img { max-height: 44vh; }
-  }
-
-  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .slide, .nav-btn, .dot, .photo-frame, .ufo, .rec-dot, .begin-hint {
+    .slide, .nav-btn, .dot, .ufo, .rec-dot, .begin-hint {
       transition: none !important;
       animation: none !important;
     }
   }
 
-  /* Print: hide controls */
   @media print {
     .hud, .controls { display: none; }
-    .slide { position: relative; opacity: 1; visibility: visible; page-break-after: always; }
+    .slide { position: relative; opacity: 1; visibility: visible; page-break-after: always; height: auto; }
   }
 </style>
 </head>
@@ -503,53 +782,49 @@
     <span>Transmission &middot; Mother's Day 2026</span>
   </div>
   <div class="hud-right">
-    <span id="counter">01 / 18</span>
+    <span id="counter">01 / 19</span>
   </div>
 </header>
 
 <main class="deck" id="deck">
 
-  <!-- 1. Cover -->
-  <section class="slide active" data-slide="1">
-    <div class="slide-inner">
-      <svg class="ufo" viewBox="0 0 120 120" aria-hidden="true">
-        <defs>
-          <radialGradient id="beam" cx="50%" cy="0%" r="80%">
-            <stop offset="0%" stop-color="#c2a878" stop-opacity="0.5"/>
-            <stop offset="100%" stop-color="#c2a878" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <path d="M 60 60 L 24 105 L 96 105 Z" fill="url(#beam)"/>
-        <ellipse cx="60" cy="62" rx="42" ry="9" fill="#4a6e73"/>
-        <ellipse cx="60" cy="58" rx="42" ry="9" fill="#5b8388"/>
-        <ellipse cx="60" cy="50" rx="22" ry="14" fill="#c2a878"/>
-        <ellipse cx="60" cy="46" rx="22" ry="14" fill="#d4be96"/>
-        <circle cx="60" cy="44" r="6" fill="#f7f8fa"/>
-        <circle cx="60" cy="44" r="3" fill="#4a6e73"/>
-        <circle cx="36" cy="64" r="2" fill="#f7f8fa"/>
-        <circle cx="60" cy="66" r="2" fill="#f7f8fa"/>
-        <circle cx="84" cy="64" r="2" fill="#f7f8fa"/>
-      </svg>
-      <div class="cover-meta">
-        <span>Incoming Transmission</span>
-        <span class="divider"></span>
-        <span>Origin: Distant Future &middot; Recipient: Sade</span>
-      </div>
-      <h1 class="cover-title">Hello, Sade.</h1>
-      <p class="narration lead">
-        We are aliens from the distant future. We come in peace.
-      </p>
-      <div class="begin-hint">
-        <span>Click anywhere to begin</span>
-        <span>&rarr;</span>
-      </div>
+  <!-- 1. COVER -->
+  <section class="slide cover active" data-slide="1" data-tone="dark">
+    <div class="cover-meta">
+      <span>Incoming Transmission</span>
+      <span class="divider"></span>
+      <span>Origin: Distant Future &middot; Recipient: Sade</span>
+    </div>
+    <svg class="ufo" viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <radialGradient id="beam" cx="50%" cy="0%" r="80%">
+          <stop offset="0%" stop-color="#c2a878" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#c2a878" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <path d="M 60 60 L 24 105 L 96 105 Z" fill="url(#beam)"/>
+      <ellipse cx="60" cy="62" rx="42" ry="9" fill="#4a6e73"/>
+      <ellipse cx="60" cy="58" rx="42" ry="9" fill="#5b8388"/>
+      <ellipse cx="60" cy="50" rx="22" ry="14" fill="#c2a878"/>
+      <ellipse cx="60" cy="46" rx="22" ry="14" fill="#d4be96"/>
+      <circle cx="60" cy="44" r="6" fill="#f7f8fa"/>
+      <circle cx="60" cy="44" r="3" fill="#4a6e73"/>
+      <circle cx="36" cy="64" r="2" fill="#f7f8fa"/>
+      <circle cx="60" cy="66" r="2" fill="#f7f8fa"/>
+      <circle cx="84" cy="64" r="2" fill="#f7f8fa"/>
+    </svg>
+    <h1 class="cover-title">Hello, Sade.</h1>
+    <p class="cover-tag">We are aliens from the distant future. We come in peace.</p>
+    <div class="begin-hint">
+      <span>Click anywhere to begin</span>
+      <span>&rarr;</span>
     </div>
   </section>
 
-  <!-- 2. Alien intro -->
-  <section class="slide" data-slide="2">
-    <div class="slide-inner">
-      <div class="voice">Transmission &middot; Origin Unknown</div>
+  <!-- 2. ALIEN INTRO -->
+  <section class="slide pause" data-slide="2">
+    <div class="pause-inner">
+      <div class="pause-section-title">Transmission &middot; Origin Unknown</div>
       <p class="narration">
         We came to your children and told them, <em>"Take us to your leader."</em> They directed us to you. So that's why we are here.
       </p>
@@ -560,10 +835,10 @@
     </div>
   </section>
 
-  <!-- 3. Asked children for proof -->
-  <section class="slide" data-slide="3">
-    <div class="slide-inner">
-      <div class="voice">Transmission</div>
+  <!-- 3. ASKED CHILDREN -->
+  <section class="slide pause" data-slide="3">
+    <div class="pause-inner">
+      <div class="pause-section-title">Field Interviews &middot; Subjects: 3</div>
       <p class="narration lead">
         We asked your children to prove that you are indeed the leader.
       </p>
@@ -571,25 +846,29 @@
     </div>
   </section>
 
-  <!-- 4. Kids testimony 1 -->
-  <section class="slide" data-slide="4">
-    <div class="slide-inner">
+  <!-- 4. KIDS' TESTIMONY (Sloane, Harrison, Scarlett) -->
+  <section class="slide pause" data-slide="4">
+    <div class="pause-inner">
       <div class="quote-stack">
         <div class="quote">
-          <div class="voice kid-sloane">Sloane, age 5</div>
+          <div class="voice kid-sloane">Sloane, age 4</div>
           <p class="quote-text">Mama is the leader because she likes the house and likes all her kids.</p>
         </div>
         <div class="quote">
-          <div class="voice kid-harry">Harrison, age 4</div>
+          <div class="voice kid-harry">Harrison, age 8</div>
           <p class="quote-text">Because she is the best one here.</p>
+        </div>
+        <div class="quote">
+          <div class="voice kid-scarlett">Scarlett, age 6</div>
+          <p class="quote-text">Mama is the leader because she loves her children.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 5. Daddy is the baddest -->
-  <section class="slide" data-slide="5">
-    <div class="slide-inner">
+  <!-- 5. DADDY IS THE BADDEST -->
+  <section class="slide pause" data-slide="5">
+    <div class="pause-inner">
       <div class="quote-stack">
         <div class="quote">
           <div class="voice kid-sloane">Sloane</div>
@@ -607,9 +886,9 @@
     </div>
   </section>
 
-  <!-- 6. Alien redirects -->
-  <section class="slide" data-slide="6">
-    <div class="slide-inner">
+  <!-- 6. ALIEN REDIRECTS -->
+  <section class="slide pause" data-slide="6">
+    <div class="pause-inner">
       <div class="quote-stack">
         <div class="quote">
           <div class="voice">Alien</div>
@@ -627,10 +906,10 @@
     </div>
   </section>
 
-  <!-- 7. Photo evidence intro -->
-  <section class="slide" data-slide="7">
-    <div class="slide-inner">
-      <div class="voice">Photographic Evidence</div>
+  <!-- 7. PHOTOGRAPHIC EVIDENCE INTRO -->
+  <section class="slide pause" data-slide="7">
+    <div class="pause-inner">
+      <div class="pause-section-title">Photographic Evidence</div>
       <p class="narration lead">
         We asked the male person and the childlings to show us photographs of the family, so we could see if Mama was really the leader.
       </p>
@@ -638,177 +917,204 @@
     </div>
   </section>
 
-  <!-- 8. Medical procedure -->
-  <section class="slide" data-slide="8">
-    <div class="slide-inner">
-      <p class="narration">
-        First &mdash; the childlings seem to have come directly from her body, through a gruesome scientific experiment.
+  <!-- 8. MEDICAL PROCEDURE — spread (photo left) -->
+  <section class="slide spread" data-slide="8">
+    <div class="photo-half">
+      <img src="images/medical_procedure.jpeg" alt="Sade in the hospital after delivery" loading="eager">
+      <span class="photo-meta">Evidence A</span>
+    </div>
+    <div class="text-half">
+      <div class="label">Exhibit 01</div>
+      <p class="heading">
+        First &mdash; the childlings seem to have come <em>directly from her body</em>, through a gruesome scientific experiment.
       </p>
-      <figure class="photo-frame">
-        <img src="images/medical_procedure.jpeg" alt="Sade in the hospital just after delivery" loading="eager">
-      </figure>
     </div>
   </section>
 
-  <!-- 9. First became a mama -->
-  <section class="slide" data-slide="9">
-    <div class="slide-inner">
-      <p class="narration">Despite that, she seems to love them.</p>
-      <figure class="photo-frame">
-        <img src="images/first_became_a_mama.jpeg" alt="Sade with her firstborn" loading="lazy">
-      </figure>
+  <!-- 9. FIRST BECAME A MAMA — spread (photo right) -->
+  <section class="slide spread flip" data-slide="9">
+    <div class="photo-half">
+      <img src="images/first_became_a_mama.jpeg" alt="Sade with her firstborn" loading="lazy">
+      <span class="photo-meta">Evidence B</span>
+    </div>
+    <div class="text-half">
+      <div class="label">Exhibit 02 &middot; And yet</div>
+      <p class="heading">
+        Despite that &mdash; she <em>seems to love them</em>.
+      </p>
     </div>
   </section>
 
-  <!-- 10. Birthdays -->
-  <section class="slide" data-slide="10">
-    <div class="slide-inner">
-      <p class="narration">
-        Every year she leads an elaborate ritual called <em>"Birth Day"</em> for each child &mdash; to remember the day of their science experiment.
-      </p>
-      <div class="photo-row tilt">
-        <figure class="photo-frame">
-          <img src="images/birthday-18-harry.jpeg" alt="Harrison's first birthday" loading="lazy">
-          <figcaption class="caption">Harry, 1</figcaption>
-        </figure>
-        <figure class="photo-frame">
-          <img src="images/birthday-23-sloane.jpeg" alt="Sloane's birthday" loading="lazy">
-          <figcaption class="caption">Sloane, 2</figcaption>
-        </figure>
-        <figure class="photo-frame">
-          <img src="images/birthday-26-sloane.jpeg" alt="Sloane's birthday this year" loading="lazy">
-          <figcaption class="caption">Sloane, 5</figcaption>
-        </figure>
+  <!-- 10. BIRTHDAYS TRIPTYCH -->
+  <section class="slide triptych" data-slide="10">
+    <p class="triptych-head">
+      Every year she leads an elaborate ritual called <em>"Birth Day"</em> &mdash; for each child, to remember the day of their science experiment.
+    </p>
+    <div class="triptych-strip">
+      <div class="triptych-cell">
+        <img src="images/birthday-18-harry.jpeg" alt="Harry's birthday in 2018" loading="lazy">
+        <span class="cell-label">Harry &middot; 2018</span>
+      </div>
+      <div class="triptych-cell">
+        <img src="images/birthday-23-sloane.jpeg" alt="Sloane's birthday in 2023" loading="lazy">
+        <span class="cell-label">Sloane &middot; 2023</span>
+      </div>
+      <div class="triptych-cell">
+        <img src="images/birthday-26-scarlett.jpeg" alt="Scarlett's 6th birthday in 2026" loading="lazy">
+        <span class="cell-label">Scarlett &middot; 2026</span>
       </div>
     </div>
+    <p class="triptych-foot">Three childlings &middot; three rituals &middot; same leader.</p>
   </section>
 
-  <!-- 11. Dutch castle -->
-  <section class="slide" data-slide="11">
-    <div class="slide-inner">
-      <p class="narration">
-        We have proof that she brought her kidling to visit other leaders, in their castle.
+  <!-- 11. DUTCH CASTLE — spread (photo left) -->
+  <section class="slide spread" data-slide="11">
+    <div class="photo-half">
+      <img src="images/dutch_castle.jpeg" alt="Sade at a Dutch castle with her child" loading="lazy">
+      <span class="photo-meta">Evidence D</span>
+    </div>
+    <div class="text-half">
+      <div class="label">Exhibit 04 &middot; Diplomatic visit</div>
+      <p class="heading">
+        We have proof that she brought her kidling to visit other leaders, in their <em>castle</em>.
       </p>
-      <figure class="photo-frame">
-        <img src="images/dutch_castle.jpeg" alt="Sade and child at a Dutch castle" loading="lazy">
-      </figure>
     </div>
   </section>
 
-  <!-- 12. Princesses & Queen -->
-  <section class="slide" data-slide="12">
-    <div class="slide-inner">
-      <p class="narration">
-        Also &mdash; her daughter is clearly a princess, which makes her a queen, according to human rules.
-      </p>
-      <div class="photo-row">
-        <figure class="photo-frame">
-          <img src="images/at_beach_with_kids.jpeg" alt="At the beach with the kids" loading="lazy">
-        </figure>
-        <figure class="photo-frame">
-          <img src="images/sloane-princess.jpeg" alt="Sloane in a princess dress" loading="lazy">
-        </figure>
+  <!-- 12. PRINCESS DIPTYCH -->
+  <section class="slide diptych" data-slide="12">
+    <p class="diptych-head">
+      Also &mdash; her daughters are clearly <em>princesses</em>, which makes her a queen, according to human rules.
+    </p>
+    <div class="diptych-strip">
+      <div class="diptych-cell">
+        <img src="images/at_beach_with_kids.jpeg" alt="Sade at the beach with her children" loading="lazy">
       </div>
-      <p class="small-line">
-        Queens are leaders. We searched if there was a king nearby but could not find one. The childlings shrugged. So we conclude she is <em>the</em> leader.
+      <div class="diptych-cell">
+        <img src="images/sloane-princess.jpeg" alt="Sloane in a princess dress" loading="lazy">
+      </div>
+    </div>
+    <p class="diptych-foot">
+      Queens are leaders. We did search if there was a king nearby but could not find one. The childlings shrugged their shoulders. So we conclude she is <em>the</em> leader.
+    </p>
+  </section>
+
+  <!-- 13. LIBRARIAN — spread (photo right) -->
+  <section class="slide spread flip" data-slide="13">
+    <div class="photo-half">
+      <img src="images/sade_librarian.jpeg" alt="Sade in her library" loading="lazy">
+      <span class="photo-meta">Evidence F</span>
+    </div>
+    <div class="text-half">
+      <div class="label">Exhibit 06 &middot; Chief of all Knowledge</div>
+      <p class="heading">
+        She is also the <em>Chief of all Knowledge</em>, because she is in charge of the books.
       </p>
     </div>
   </section>
 
-  <!-- 13. Librarian / Chief of Knowledge -->
-  <section class="slide" data-slide="13">
-    <div class="slide-inner">
-      <p class="narration">
-        She is also the Chief of all Knowledge, because she is in charge of the books.
-      </p>
-      <figure class="photo-frame">
-        <img src="images/sade_librarian.jpeg" alt="Sade in her library" loading="lazy">
-      </figure>
-    </div>
-  </section>
-
-  <!-- 14. Vacuum saga -->
-  <section class="slide" data-slide="14">
-    <div class="slide-inner">
-      <p class="narration">
-        Remarkably, she also does a lot of the cleaning.
-      </p>
-      <div class="saga">
-        <div class="saga-step">
-          <figure class="photo-frame">
-            <img src="images/mom-as-vacuum-1.jpeg" alt="Mom vacuuming, kids underfoot" loading="lazy">
-          </figure>
-          <p class="saga-caption">When she asked the childlings to help clean, there was a rebellion. She got very angry.</p>
+  <!-- 14. VACUUM SAGA TRIPTYCH -->
+  <section class="slide triptych saga" data-slide="14">
+    <p class="triptych-head">
+      Remarkably, she also does a lot of the cleaning.
+    </p>
+    <div class="triptych-strip">
+      <div class="saga-col">
+        <div class="saga-photo">
+          <img src="images/mom-as-vacuum-1.jpeg" alt="Mom vacuuming, kids in the way" loading="lazy">
         </div>
-        <div class="saga-step">
-          <figure class="photo-frame">
-            <img src="images/mom-as-vacuum-2.jpeg" alt="Mom and kids in the vacuum battle" loading="lazy">
-          </figure>
-          <p class="saga-caption">The children seem to have defeated her &mdash; but it was a friendly enough battle.</p>
+        <p class="saga-cap">
+          <span class="step">Step One &middot; Rebellion</span>
+          When she asked the childlings to help clean, there was a rebellion. She got very angry.
+        </p>
+      </div>
+      <div class="saga-col">
+        <div class="saga-photo">
+          <img src="images/mom-as-vacuum-2.jpeg" alt="Mom and kids in friendly battle" loading="lazy">
         </div>
-        <div class="saga-step">
-          <figure class="photo-frame">
-            <img src="images/mom-as-vacuum-3.jpeg" alt="Mom and kids cleaning together" loading="lazy">
-          </figure>
-          <p class="saga-caption">Now she has found ways to get their help, peacefully.</p>
+        <p class="saga-cap">
+          <span class="step">Step Two &middot; Battle</span>
+          The children seem to have defeated her &mdash; but it was a friendly enough battle.
+        </p>
+      </div>
+      <div class="saga-col">
+        <div class="saga-photo">
+          <img src="images/mom-as-vacuum-3.jpeg" alt="Mom and kids cleaning together" loading="lazy">
         </div>
+        <p class="saga-cap">
+          <span class="step">Step Three &middot; Peace</span>
+          Now she has found ways to get their help, peacefully.
+        </p>
       </div>
-      <p class="small-line">
-        But she's definitely in charge. No question about that. You don't get rebelled against if you're not in charge.
+    </div>
+    <p class="triptych-foot">
+      But she's definitely in charge. No question about that. You don't get rebelled against if you're not in charge.
+    </p>
+  </section>
+
+  <!-- 15. NAIL CLIPPING — spread (photo left) -->
+  <section class="slide spread" data-slide="15">
+    <div class="photo-half">
+      <img src="images/nail-clipping.jpeg" alt="Sade clipping a child's nails" loading="lazy">
+      <span class="photo-meta">Evidence H</span>
+    </div>
+    <div class="text-half">
+      <div class="label">Exhibit 08 &middot; Routine grooming</div>
+      <p class="heading">
+        She also handles the <em>grooming</em> of the childlings.
       </p>
     </div>
   </section>
 
-  <!-- 15. Nail clipping -->
-  <section class="slide" data-slide="15">
-    <div class="slide-inner">
-      <p class="narration">She also handles the grooming of the childlings.</p>
-      <figure class="photo-frame">
-        <img src="images/nail-clipping.jpeg" alt="Sade clipping a child's nails" loading="lazy">
-      </figure>
-    </div>
-  </section>
-
-  <!-- 16. Just a good mom -->
-  <section class="slide" data-slide="16">
-    <div class="slide-inner">
-      <p class="narration">And she just seems like a good person to have as a mom.</p>
-      <div class="photo-row">
-        <figure class="photo-frame">
-          <img src="images/the_bedroom_catastrophe.jpeg" alt="The bedroom catastrophe" loading="lazy">
-        </figure>
-        <figure class="photo-frame">
-          <img src="images/yankees_game.jpeg" alt="At the Yankees game" loading="lazy">
-        </figure>
+  <!-- 16. JUST A GOOD MOM — diptych -->
+  <section class="slide diptych" data-slide="16">
+    <p class="diptych-head">
+      And she just seems like a <em>good person to have as a mom</em>.
+    </p>
+    <div class="diptych-strip">
+      <div class="diptych-cell">
+        <img src="images/the_bedroom_catastrophe.jpeg" alt="The bedroom catastrophe" loading="lazy">
+      </div>
+      <div class="diptych-cell">
+        <img src="images/yankees_game.jpeg" alt="At the Yankees game" loading="lazy">
       </div>
     </div>
   </section>
 
-  <!-- 17. Style -->
-  <section class="slide" data-slide="17">
-    <div class="slide-inner">
+  <!-- 17. STYLE — spread (photo right) -->
+  <section class="slide spread flip" data-slide="17">
+    <div class="photo-half">
+      <img src="images/style.jpeg" alt="Sade looking stylish" loading="lazy">
+      <span class="photo-meta">Final Exhibit</span>
+    </div>
+    <div class="text-half">
+      <div class="label">Conclusion</div>
+      <p class="heading">
+        Finally &mdash; her <em>style is perfect</em>. So we have decided she also <em>should</em> be the leader.
+      </p>
+    </div>
+  </section>
+
+  <!-- 18. EARTHLINGS HAD THE SAME MESSAGE -->
+  <section class="slide pause" data-slide="18">
+    <div class="pause-inner">
+      <div class="pause-section-title">End-of-Mission Note</div>
       <p class="narration">
-        Finally &mdash; her style is perfect. So we have decided she also <em>should</em> be the leader.
+        All of your earthlings had the same thing to say to you when we asked if they had a message for their leader.
       </p>
-      <figure class="photo-frame">
-        <img src="images/style.jpeg" alt="Sade looking stylish" loading="lazy">
-      </figure>
+      <p class="narration">It was a strange message.</p>
+      <p class="narration"><em>But we will say the same thing, since it seems to be your custom.</em></p>
     </div>
   </section>
 
-  <!-- 18. Closing -->
-  <section class="slide" data-slide="18">
-    <div class="slide-inner">
-      <div class="voice">End of Transmission</div>
-      <h2 class="closing-title">Happy Mother's Day,<br><span class="accent">Sade.</span></h2>
-      <p class="narration">
-        You are, by every measure we ran, the leader.
-        And the best one here. <span class="heart" aria-hidden="true">&#9829;</span>
-      </p>
-      <div class="signature">
-        From Daddy, Sloane, &amp; Harrison
-        <span class="small">&mdash; and the aliens &mdash;</span>
-      </div>
+  <!-- 19. FINALE — I LOVE YOU -->
+  <section class="slide cover finale" data-slide="19" data-tone="dark">
+    <p class="finale-context">From the aliens, the childlings, &amp; the male person &mdash;</p>
+    <h2 class="finale-title"><span class="accent">"I love you."</span></h2>
+    <p class="finale-context">Happy Mother's Day, Sade. <span class="heart" aria-hidden="true">&#9829;</span></p>
+    <div class="signature">
+      Daddy, Harrison, Scarlett, &amp; Sloane
+      <span class="small">&mdash; transmission ends &mdash;</span>
     </div>
   </section>
 
@@ -851,9 +1157,18 @@
     prevBtn.disabled = current === 0;
     nextBtn.disabled = current === total - 1;
     nextBtn.textContent = current === total - 1 ? 'The End' : 'Next →';
-    // Reset scroll inside the active slide
+
+    // Reflect dark/light tone of current slide on the body so HUD adapts
+    const tone = slides[current].dataset.tone === 'dark' ? 'dark' : 'light';
+    document.body.classList.toggle('on-dark', tone === 'dark');
+
+    // Reset slide scroll
     slides[current].scrollTop = 0;
-    // Preload neighbors
+    // Scroll the active dot into view
+    const activeDot = dotsWrap.querySelector('.dot.active');
+    if (activeDot) activeDot.scrollIntoView({ block: 'nearest', inline: 'center' });
+
+    // Eager-load neighbors
     [current + 1, current + 2].forEach(i => {
       if (slides[i]) slides[i].querySelectorAll('img[loading="lazy"]').forEach(img => {
         if (!img.dataset.preloaded) { img.loading = 'eager'; img.dataset.preloaded = '1'; }
@@ -869,14 +1184,12 @@
   function next() { if (current < total - 1) go(current + 1); }
   function prev() { if (current > 0) go(current - 1); }
 
-  // Buttons
   prevBtn.addEventListener('click', prev);
   nextBtn.addEventListener('click', next);
 
   // Click anywhere on the deck to advance: left third = back, rest = next.
-  // Skip clicks on interactive elements, images, and text selections.
   deck.addEventListener('click', (e) => {
-    if (e.target.closest('a, button, input, textarea, select, .photo-frame img')) return;
+    if (e.target.closest('a, button, input, textarea, select')) return;
     if (window.getSelection && String(window.getSelection()).length > 0) return;
     const x = e.clientX;
     const w = window.innerWidth;
