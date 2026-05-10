@@ -825,7 +825,7 @@
     <span>Transmission &middot; Mother's Day 2026</span>
   </div>
   <div class="hud-right">
-    <span id="counter">01 / 19</span>
+    <span id="counter">Frame 01 / 19</span>
   </div>
 </header>
 
@@ -859,7 +859,7 @@
     <h1 class="cover-title">Hello, Sade.</h1>
     <p class="cover-tag">We are aliens from the distant future. We come in peace.</p>
     <div class="begin-hint">
-      <span>Click anywhere to begin</span>
+      <span>Begin transmission</span>
       <span>&rarr;</span>
     </div>
   </section>
@@ -983,7 +983,7 @@
     <div class="text-half">
       <div class="label">Exhibit 02 &middot; And yet</div>
       <p class="heading">
-        Despite that &mdash; she <em>seems to love them</em>.
+        Despite that &mdash; she <em>seems to be very attached to them</em>.
       </p>
     </div>
   </section>
@@ -1112,7 +1112,7 @@
   <!-- 16. JUST A GOOD MOM — diptych -->
   <section class="slide diptych" data-slide="16">
     <p class="diptych-head">
-      And she just seems like a <em>good person to have as a mom</em>.
+      And she just seems like a <em>good human to have as a mom</em>.
     </p>
     <div class="diptych-strip">
       <div class="diptych-cell">
@@ -1196,7 +1196,7 @@
   function update() {
     slides.forEach((s, i) => s.classList.toggle('active', i === current));
     dotsWrap.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
-    counter.textContent = pad(current + 1) + ' / ' + pad(total);
+    counter.textContent = 'Frame ' + pad(current + 1) + ' / ' + pad(total);
     prevBtn.disabled = current === 0;
     nextBtn.disabled = current === total - 1;
     nextBtn.textContent = current === total - 1 ? 'The End' : 'Next →';
