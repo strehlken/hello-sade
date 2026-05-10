@@ -258,17 +258,16 @@
   }
 
   /* Triptych: 3 columns of photos. Frames are square so mixed
-     orientations (the two landscape birthday shots + one portrait)
-     all read well. align-items:center horizontally centers every
-     child of this flex column (head, strip, foot) — without it,
-     the default `stretch` causes max-width children to hug the
-     left edge. Layout flows top-down so the title never gets
-     pushed off the top into the HUD. */
+     orientations all read well. Grid + justify-items:center is
+     the most defensive way to center max-width children — it
+     ignores any quirky flex-stretch behaviour. Layout flows
+     top-down so the title never gets pushed into the HUD. */
   .slide.triptych {
     background: var(--bg-cream);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: start;
     gap: 30px;
     padding: 100px 24px 130px;
     min-height: 100vh;
@@ -379,12 +378,13 @@
   }
 
   /* Diptych: 2 portrait-aspect frames so heads stay in.
-     align-items:center horizontally centers head/strip/foot. */
+     Grid + justify-items:center centers every row's content. */
   .slide.diptych {
     background: var(--bg-cream);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: start;
     gap: 30px;
     padding: 100px 24px 130px;
     min-height: 100vh;
