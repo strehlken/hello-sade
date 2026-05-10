@@ -260,14 +260,14 @@
   /* Triptych: 3 columns of photos. Frames are square so mixed
      orientations (the two landscape birthday shots + one portrait)
      all read well. The strip is centered and capped so widescreens
-     don't letterbox-crop. */
+     don't letterbox-crop. Layout flows top-down so the title never
+     gets pushed off the top into the HUD. */
   .slide.triptych {
     background: var(--bg-cream);
-    display: grid;
-    grid-template-rows: auto auto auto;
-    align-content: center;
-    gap: 28px;
-    padding: 90px 24px 130px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 100px 24px 130px;
     min-height: 100vh;
   }
   .slide.triptych .triptych-head,
@@ -297,7 +297,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 14px;
-    max-width: 1300px;
+    max-width: 1180px;
     width: 100%;
     margin: 0 auto;
   }
@@ -307,6 +307,7 @@
     background: var(--bg-deep-2);
     border-radius: 2px;
     aspect-ratio: 1 / 1;
+    max-height: 55vh;
   }
   .triptych-cell img {
     width: 100%;
@@ -374,14 +375,14 @@
     margin-bottom: 8px;
   }
 
-  /* Diptych: 2 portrait-aspect frames so heads stay in. */
+  /* Diptych: 2 portrait-aspect frames so heads stay in.
+     Top-down flow keeps the title pinned below the HUD. */
   .slide.diptych {
     background: var(--bg-cream);
-    display: grid;
-    grid-template-rows: auto auto auto;
-    align-content: center;
-    gap: 28px;
-    padding: 90px 24px 130px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 100px 24px 130px;
     min-height: 100vh;
   }
   .slide.diptych .diptych-head,
@@ -410,7 +411,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
-    max-width: 1180px;
+    max-width: 980px;
     width: 100%;
     margin: 0 auto;
   }
@@ -420,7 +421,7 @@
     background: var(--bg-deep-2);
     border-radius: 2px;
     aspect-ratio: 3 / 4;
-    max-height: 70vh;
+    max-height: 62vh;
   }
   .diptych-cell img {
     width: 100%;
@@ -428,6 +429,104 @@
     object-fit: cover;
     display: block;
   }
+
+  /* Saga step: a click-through deep-dive. Small banner up top
+     repeats the section title across all three steps, then a
+     half-page magazine spread underneath (photo on one side,
+     step caption on the other). Photo frame is portrait 3/4 so
+     the existing vacuum-1/2/3 calibrations translate. */
+  .slide.saga-step {
+    background: var(--bg-cream);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+  .saga-banner {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 88px 24px 22px;
+    border-bottom: 1px solid rgba(74, 110, 115, 0.15);
+  }
+  .saga-banner .saga-step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--alien);
+    margin-bottom: 12px;
+  }
+  .saga-banner .saga-banner-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    color: var(--ink-soft);
+    max-width: 720px;
+    line-height: 1.4;
+  }
+  .saga-step .saga-photo-side {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+  }
+  .saga-step .saga-text-side {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    padding: 30px 6vw 110px;
+  }
+  .saga-step.flip .saga-photo-side { grid-column: 2; }
+  .saga-step.flip .saga-text-side  { grid-column: 1; }
+
+  .saga-photo-frame {
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    max-width: 460px;
+    max-height: 64vh;
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--bg-deep-2);
+    box-shadow: var(--shadow-md);
+  }
+  .saga-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .saga-photo-frame .photo-meta {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--on-dark);
+    background: rgba(0, 0, 0, 0.32);
+    padding: 5px 9px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 999px;
+  }
+
+  .saga-step-text {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.5vw, 2.15rem);
+    line-height: 1.32;
+    color: var(--ink);
+    max-width: 520px;
+  }
+  .saga-step-text em { font-style: italic; color: var(--alien); }
 
   /* === PHOTO POSITIONING ===
      These rules control where in each photo's frame the visible
@@ -438,8 +537,8 @@
      You can also calibrate visually — load the page with `?adjust=1`
      and drag any photo, then click Export CSS to copy the values
      back into this section. */
-  img[src="images/medical_procedure.jpeg"]  { object-position: 50% 30%; }
-  img[src="images/first_became_a_mama.jpeg"] { object-position: 50% 65%; }
+  img[src="images/medical_procedure.jpeg"]  { object-position: 11.6% 57.1%; }
+  img[src="images/first_became_a_mama.jpeg"] { object-position: 46.2% 18.3%; }
   img[src="images/birthday-18-harry.jpeg"]  { object-position: 50% 50%; }
   img[src="images/birthday-23-sloane.jpeg"] { object-position: 50% 50%; }
   img[src="images/birthday-26-scarlett.jpeg"] { object-position: 50% 60%; }
@@ -447,19 +546,19 @@
   img[src="images/at_beach_with_kids.jpeg"] { object-position: 50% 30%; }
   img[src="images/sloane-princess.jpeg"]    { object-position: 50% 30%; }
   img[src="images/sade_librarian.jpeg"]     { object-position: 50% 35%; }
-  img[src="images/mom-as-vacuum-1.jpeg"]    { object-position: 50% 50%; }
-  img[src="images/mom-as-vacuum-2.jpeg"]    { object-position: 50% 50%; }
-  img[src="images/mom-as-vacuum-3.jpeg"]    { object-position: 50% 50%; }
-  img[src="images/nail-clipping.jpeg"]      { object-position: 50% 40%; }
+  img[src="images/mom-as-vacuum-1.jpeg"]    { object-position: 51.0% 13.4%; }
+  img[src="images/mom-as-vacuum-2.jpeg"]    { object-position: 46.6% 7.2%; }
+  img[src="images/mom-as-vacuum-3.jpeg"]    { object-position: 46.6% 8.4%; }
+  img[src="images/nail-clipping.jpeg"]      { object-position: 49.4% 21.0%; }
   img[src="images/the_bedroom_catastrophe.jpeg"] { object-position: 50% 30%; }
   img[src="images/yankees_game.jpeg"]       { object-position: 50% 70%; }
-  img[src="images/style.jpeg"]              { object-position: 50% 70%; }
+  img[src="images/style.jpeg"]              { object-position: 51.7% 85.6%; }
 
   /* === CALIBRATION MODE === */
   body.adjust .photo-half img,
   body.adjust .triptych-cell img,
   body.adjust .diptych-cell img,
-  body.adjust .saga-col .saga-photo img {
+  body.adjust .saga-photo-frame img {
     cursor: grab;
     user-select: none;
     -webkit-user-drag: none;
@@ -467,7 +566,7 @@
   body.adjust .photo-half img.dragging,
   body.adjust .triptych-cell img.dragging,
   body.adjust .diptych-cell img.dragging,
-  body.adjust .saga-col .saga-photo img.dragging { cursor: grabbing; }
+  body.adjust .saga-photo-frame img.dragging { cursor: grabbing; }
 
   #cal-panel {
     position: fixed;
@@ -842,9 +941,30 @@
       gap: 14px;
       max-width: 100%;
     }
-    .triptych-cell { aspect-ratio: 4 / 3; }
+    .triptych-cell { aspect-ratio: 4 / 3; max-height: none; }
     .diptych-cell  { aspect-ratio: 3 / 4; max-height: none; }
     .saga-col .saga-photo { aspect-ratio: 3 / 4; max-height: none; }
+
+    /* Saga step → stack */
+    .slide.saga-step {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+      min-height: 100vh;
+    }
+    .saga-banner { padding: 88px 18px 18px; }
+    .saga-step .saga-photo-side {
+      grid-column: 1;
+      grid-row: 2;
+      padding: 22px;
+    }
+    .saga-step .saga-text-side {
+      grid-column: 1;
+      grid-row: 3;
+      padding: 12px 24px 110px;
+    }
+    .saga-step.flip .saga-photo-side { grid-column: 1; grid-row: 2; }
+    .saga-step.flip .saga-text-side  { grid-column: 1; grid-row: 3; }
+    .saga-photo-frame { max-width: 360px; }
     .saga-col {
       gap: 10px;
       margin-bottom: 22px;
@@ -883,7 +1003,7 @@
     <span>Transmission &middot; Mother's Day 2026</span>
   </div>
   <div class="hud-right">
-    <span id="counter">01 / 19</span>
+    <span id="counter">01 / 22</span>
   </div>
 </header>
 
@@ -1114,47 +1234,77 @@
     </div>
   </section>
 
-  <!-- 14. VACUUM SAGA TRIPTYCH -->
-  <section class="slide triptych saga" data-slide="14">
-    <p class="triptych-head">
-      Remarkably, she also does a lot of the cleaning.
-    </p>
-    <div class="triptych-strip">
-      <div class="saga-col">
-        <div class="saga-photo">
-          <img src="images/mom-as-vacuum-1.jpeg" alt="Mom vacuuming, kids in the way" loading="lazy">
-        </div>
-        <p class="saga-cap">
-          <span class="step">Step One &middot; Rebellion</span>
-          When she asked the childlings to help clean, there was a rebellion. She got very angry.
-        </p>
-      </div>
-      <div class="saga-col">
-        <div class="saga-photo">
-          <img src="images/mom-as-vacuum-2.jpeg" alt="Mom and kids in friendly battle" loading="lazy">
-        </div>
-        <p class="saga-cap">
-          <span class="step">Step Two &middot; Battle</span>
-          The children seem to have defeated her &mdash; but it was a friendly enough battle.
-        </p>
-      </div>
-      <div class="saga-col">
-        <div class="saga-photo">
-          <img src="images/mom-as-vacuum-3.jpeg" alt="Mom and kids cleaning together" loading="lazy">
-        </div>
-        <p class="saga-cap">
-          <span class="step">Step Three &middot; Peace</span>
-          Now she has found ways to get their help, peacefully.
-        </p>
-      </div>
+  <!-- 14. SAGA STEP 1 — REBELLION -->
+  <section class="slide saga-step" data-slide="14">
+    <div class="saga-banner">
+      <span class="saga-step-num">Cleaning &middot; Step 1 of 3 &middot; Rebellion</span>
+      <span class="saga-banner-title">Remarkably, she also does a lot of the cleaning.</span>
     </div>
-    <p class="triptych-foot">
-      But she's definitely in charge. No question about that. You don't get rebelled against if you're not in charge.
-    </p>
+    <div class="saga-photo-side">
+      <figure class="saga-photo-frame">
+        <img src="images/mom-as-vacuum-1.jpeg" alt="Mom vacuuming, kids in the way" loading="lazy">
+        <span class="photo-meta">Step 1 / 3</span>
+      </figure>
+    </div>
+    <div class="saga-text-side">
+      <p class="saga-step-text">
+        When she asked the childlings to help clean, there was a <em>rebellion</em>. She got very angry.
+      </p>
+    </div>
   </section>
 
-  <!-- 15. NAIL CLIPPING — spread (photo left) -->
-  <section class="slide spread" data-slide="15">
+  <!-- 15. SAGA STEP 2 — BATTLE -->
+  <section class="slide saga-step" data-slide="15">
+    <div class="saga-banner">
+      <span class="saga-step-num">Cleaning &middot; Step 2 of 3 &middot; Battle</span>
+      <span class="saga-banner-title">Remarkably, she also does a lot of the cleaning.</span>
+    </div>
+    <div class="saga-photo-side">
+      <figure class="saga-photo-frame">
+        <img src="images/mom-as-vacuum-2.jpeg" alt="Mom and kids in friendly battle" loading="lazy">
+        <span class="photo-meta">Step 2 / 3</span>
+      </figure>
+    </div>
+    <div class="saga-text-side">
+      <p class="saga-step-text">
+        The children seem to have <em>defeated her</em> &mdash; but it was a friendly enough battle.
+      </p>
+    </div>
+  </section>
+
+  <!-- 16. SAGA STEP 3 — PEACE -->
+  <section class="slide saga-step" data-slide="16">
+    <div class="saga-banner">
+      <span class="saga-step-num">Cleaning &middot; Step 3 of 3 &middot; Peace</span>
+      <span class="saga-banner-title">Remarkably, she also does a lot of the cleaning.</span>
+    </div>
+    <div class="saga-photo-side">
+      <figure class="saga-photo-frame">
+        <img src="images/mom-as-vacuum-3.jpeg" alt="Mom and kids cleaning together" loading="lazy">
+        <span class="photo-meta">Step 3 / 3</span>
+      </figure>
+    </div>
+    <div class="saga-text-side">
+      <p class="saga-step-text">
+        Now she has found ways to get their help &mdash; <em>peacefully</em>.
+      </p>
+    </div>
+  </section>
+
+  <!-- 17. SAGA CONCLUSION -->
+  <section class="slide pause" data-slide="17">
+    <div class="pause-inner">
+      <div class="pause-section-title">End of Saga</div>
+      <p class="narration lead">
+        But she's <em>definitely in charge</em>.
+      </p>
+      <p class="narration">No question about that.</p>
+      <p class="small-line">You don't get rebelled against if you're not in charge.</p>
+    </div>
+  </section>
+
+  <!-- 18. NAIL CLIPPING — spread (photo left) -->
+  <section class="slide spread" data-slide="18">
     <div class="photo-half">
       <img src="images/nail-clipping.jpeg" alt="Sade clipping a child's nails" loading="lazy">
       <span class="photo-meta">Evidence H</span>
@@ -1167,8 +1317,8 @@
     </div>
   </section>
 
-  <!-- 16. JUST A GOOD MOM — diptych -->
-  <section class="slide diptych" data-slide="16">
+  <!-- 19. JUST A GOOD MOM — diptych -->
+  <section class="slide diptych" data-slide="19">
     <p class="diptych-head">
       And she just seems like a <em>good person to have as a mom</em>.
     </p>
@@ -1182,8 +1332,8 @@
     </div>
   </section>
 
-  <!-- 17. STYLE — spread (photo right) -->
-  <section class="slide spread flip" data-slide="17">
+  <!-- 20. STYLE — spread (photo right) -->
+  <section class="slide spread flip" data-slide="20">
     <div class="photo-half">
       <img src="images/style.jpeg" alt="Sade looking stylish" loading="lazy">
       <span class="photo-meta">Final Exhibit</span>
@@ -1196,8 +1346,8 @@
     </div>
   </section>
 
-  <!-- 18. EARTHLINGS HAD THE SAME MESSAGE -->
-  <section class="slide pause" data-slide="18">
+  <!-- 21. EARTHLINGS HAD THE SAME MESSAGE -->
+  <section class="slide pause" data-slide="21">
     <div class="pause-inner">
       <div class="pause-section-title">End-of-Mission Note</div>
       <p class="narration">
@@ -1208,8 +1358,8 @@
     </div>
   </section>
 
-  <!-- 19. FINALE — I LOVE YOU -->
-  <section class="slide cover finale" data-slide="19" data-tone="dark">
+  <!-- 22. FINALE — I LOVE YOU -->
+  <section class="slide cover finale" data-slide="22" data-tone="dark">
     <p class="finale-context">From the aliens, the childlings, &amp; the male person &mdash;</p>
     <h2 class="finale-title"><span class="accent">"I love you."</span></h2>
     <p class="finale-context">Happy Mother's Day, Sade. <span class="heart" aria-hidden="true">&#9829;</span></p>
@@ -1237,7 +1387,7 @@
 (function () {
   const STATE_KEY = 'hello-sade-photo-positions-v1';
   const ADJUST = new URLSearchParams(location.search).has('adjust');
-  const PHOTO_SEL = '.photo-half img, .triptych-cell img, .diptych-cell img, .saga-col .saga-photo img';
+  const PHOTO_SEL = '.photo-half img, .triptych-cell img, .diptych-cell img, .saga-photo-frame img';
 
   let state = {};
   try { state = JSON.parse(localStorage.getItem(STATE_KEY) || '{}'); } catch (e) { state = {}; }
