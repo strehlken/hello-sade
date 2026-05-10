@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='34' rx='22' ry='6' fill='%234a6e73'/%3E%3Cellipse cx='32' cy='30' rx='14' ry='10' fill='%23c2a878'/%3E%3Ccircle cx='32' cy='28' r='4' fill='%23f7f8fa'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500;1,9..144,600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500;1,8..60,600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -33,7 +33,7 @@
     --shadow-md: 0 4px 12px rgba(35, 35, 36, 0.08), 0 12px 32px rgba(35, 35, 36, 0.06);
     --shadow-lg: 0 10px 30px rgba(35, 35, 36, 0.10), 0 30px 60px rgba(35, 35, 36, 0.08);
     --sans: 'Brandon Grotesque', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-    --serif: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
+    --serif: 'Source Serif 4', 'Source Serif Pro', 'Iowan Old Style', 'Georgia', serif;
     --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
     --hand: 'Caveat', 'Brush Script MT', cursive;
   }
@@ -257,52 +257,56 @@
     line-height: 1.5;
   }
 
-  /* Triptych: 3 columns of photos */
+  /* Triptych: 3 columns of photos. Frames are square so mixed
+     orientations (the two landscape birthday shots + one portrait)
+     all read well. The strip is centered and capped so widescreens
+     don't letterbox-crop. */
   .slide.triptych {
     background: var(--bg-cream);
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    padding: 80px 0 120px;
-    height: 100vh;
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: 28px;
+    padding: 90px 24px 130px;
+    min-height: 100vh;
   }
   .slide.triptych .triptych-head,
   .slide.triptych .triptych-foot {
     text-align: center;
-    padding: 0 32px;
   }
   .slide.triptych .triptych-head {
     font-family: var(--serif);
-    font-size: clamp(1.5rem, 2.4vw, 2.05rem);
+    font-size: clamp(1.55rem, 2.5vw, 2.15rem);
     line-height: 1.3;
     color: var(--ink);
-    max-width: 900px;
-    margin: 0 auto 22px;
-    font-variation-settings: "opsz" 60;
+    max-width: 920px;
+    margin: 0 auto;
   }
   .slide.triptych .triptych-head em { font-style: italic; color: var(--alien); }
   .slide.triptych .triptych-foot {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     color: var(--ink-soft);
-    max-width: 720px;
-    margin: 22px auto 0;
+    max-width: 760px;
+    margin: 0 auto;
     line-height: 1.5;
   }
 
   .triptych-strip {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px;
-    padding: 0 6px;
-    height: 100%;
-    min-height: 0;
+    gap: 14px;
+    max-width: 1300px;
+    width: 100%;
+    margin: 0 auto;
   }
   .triptych-cell {
     position: relative;
     overflow: hidden;
     background: var(--bg-deep-2);
     border-radius: 2px;
+    aspect-ratio: 1 / 1;
   }
   .triptych-cell img {
     width: 100%;
@@ -323,24 +327,26 @@
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border-radius: 999px;
+    z-index: 2;
   }
 
-  /* Vacuum saga: triptych with captions below each photo */
+  /* Vacuum saga: portrait-aspect frames so all three
+     vacuum photos (which are taller than wide) show heads + feet. */
   .slide.triptych.saga .triptych-strip {
-    grid-template-rows: 1fr auto;
+    max-width: 1180px;
   }
   .saga-col {
-    display: grid;
-    grid-template-rows: 1fr auto;
+    display: flex;
+    flex-direction: column;
     gap: 18px;
-    min-height: 0;
   }
   .saga-col .saga-photo {
     position: relative;
     overflow: hidden;
     background: var(--bg-deep-2);
-    min-height: 0;
     border-radius: 2px;
+    aspect-ratio: 3 / 4;
+    max-height: 60vh;
   }
   .saga-col .saga-photo img {
     width: 100%;
@@ -354,7 +360,7 @@
     font-size: clamp(1.05rem, 1.3vw, 1.25rem);
     line-height: 1.45;
     color: var(--ink);
-    padding: 0 8px;
+    padding: 0 4px;
     text-align: left;
   }
   .saga-col .saga-cap .step {
@@ -368,56 +374,154 @@
     margin-bottom: 8px;
   }
 
-  /* Diptych: 2 photos with text panel */
+  /* Diptych: 2 portrait-aspect frames so heads stay in. */
   .slide.diptych {
     background: var(--bg-cream);
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    padding: 80px 0 120px;
-    height: 100vh;
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: 28px;
+    padding: 90px 24px 130px;
+    min-height: 100vh;
   }
   .slide.diptych .diptych-head,
   .slide.diptych .diptych-foot {
     text-align: center;
-    padding: 0 32px;
   }
   .slide.diptych .diptych-head {
     font-family: var(--serif);
-    font-size: clamp(1.5rem, 2.4vw, 2.05rem);
+    font-size: clamp(1.55rem, 2.5vw, 2.15rem);
     line-height: 1.3;
     color: var(--ink);
-    max-width: 900px;
-    margin: 0 auto 22px;
+    max-width: 920px;
+    margin: 0 auto;
   }
   .slide.diptych .diptych-head em { font-style: italic; color: var(--alien); }
   .slide.diptych .diptych-foot {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     color: var(--ink-soft);
-    max-width: 720px;
-    margin: 22px auto 0;
+    max-width: 760px;
+    margin: 0 auto;
     line-height: 1.5;
   }
   .diptych-strip {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    padding: 0 6px;
-    height: 100%;
-    min-height: 0;
+    gap: 18px;
+    max-width: 1180px;
+    width: 100%;
+    margin: 0 auto;
   }
   .diptych-cell {
     position: relative;
     overflow: hidden;
     background: var(--bg-deep-2);
     border-radius: 2px;
+    aspect-ratio: 3 / 4;
+    max-height: 70vh;
   }
   .diptych-cell img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  /* === PHOTO POSITIONING ===
+     These rules control where in each photo's frame the visible
+     window sits. Edit a value to nudge that photo. The format is
+     `object-position: <horizontal>% <vertical>%`. 50% 50% means
+     centered. Lower vertical values show MORE of the photo's top;
+     higher values show MORE of the photo's bottom.
+     You can also calibrate visually — load the page with `?adjust=1`
+     and drag any photo, then click Export CSS to copy the values
+     back into this section. */
+  img[src="images/medical_procedure.jpeg"]  { object-position: 50% 30%; }
+  img[src="images/first_became_a_mama.jpeg"] { object-position: 50% 65%; }
+  img[src="images/birthday-18-harry.jpeg"]  { object-position: 50% 50%; }
+  img[src="images/birthday-23-sloane.jpeg"] { object-position: 50% 50%; }
+  img[src="images/birthday-26-scarlett.jpeg"] { object-position: 50% 60%; }
+  img[src="images/dutch_castle.jpeg"]       { object-position: 50% 35%; }
+  img[src="images/at_beach_with_kids.jpeg"] { object-position: 50% 30%; }
+  img[src="images/sloane-princess.jpeg"]    { object-position: 50% 30%; }
+  img[src="images/sade_librarian.jpeg"]     { object-position: 50% 35%; }
+  img[src="images/mom-as-vacuum-1.jpeg"]    { object-position: 50% 50%; }
+  img[src="images/mom-as-vacuum-2.jpeg"]    { object-position: 50% 50%; }
+  img[src="images/mom-as-vacuum-3.jpeg"]    { object-position: 50% 50%; }
+  img[src="images/nail-clipping.jpeg"]      { object-position: 50% 40%; }
+  img[src="images/the_bedroom_catastrophe.jpeg"] { object-position: 50% 30%; }
+  img[src="images/yankees_game.jpeg"]       { object-position: 50% 70%; }
+  img[src="images/style.jpeg"]              { object-position: 50% 70%; }
+
+  /* === CALIBRATION MODE === */
+  body.adjust .photo-half img,
+  body.adjust .triptych-cell img,
+  body.adjust .diptych-cell img,
+  body.adjust .saga-col .saga-photo img {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  body.adjust .photo-half img.dragging,
+  body.adjust .triptych-cell img.dragging,
+  body.adjust .diptych-cell img.dragging,
+  body.adjust .saga-col .saga-photo img.dragging { cursor: grabbing; }
+
+  #cal-panel {
+    position: fixed;
+    top: 56px;
+    right: 20px;
+    z-index: 200;
+    background: #15212a;
+    color: #f4efe5;
+    padding: 16px 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.5;
+    border-radius: 6px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    max-width: 260px;
+    letter-spacing: 0.06em;
+  }
+  #cal-panel h4 {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #c2a878;
+    margin-bottom: 8px;
+  }
+  #cal-panel p { margin-bottom: 10px; }
+  #cal-panel button {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px 10px;
+    background: #4a6e73;
+    color: #f4efe5;
+    border: 1px solid #6a8d92;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  #cal-panel button:hover { background: #5b8388; }
+  #cal-export-out {
+    position: fixed;
+    inset: 8vh 8vw;
+    z-index: 300;
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    background: #fff;
+    color: #232324;
+    border: 2px solid #4a6e73;
+    border-radius: 6px;
+    resize: none;
   }
 
   /* === COMPONENTS === */
@@ -450,7 +554,7 @@
     line-height: 0.96;
     letter-spacing: -0.025em;
     color: var(--on-dark);
-    font-variation-settings: "opsz" 144;
+    font-variation-settings: "opsz" 60;
     margin-bottom: 36px;
   }
 
@@ -589,7 +693,7 @@
     line-height: 0.95;
     letter-spacing: -0.035em;
     color: var(--on-dark);
-    font-variation-settings: "opsz" 144;
+    font-variation-settings: "opsz" 60;
     margin: 30px 0 50px;
     text-align: center;
   }
@@ -729,21 +833,18 @@
 
     /* Triptych → vertical stack */
     .slide.triptych, .slide.diptych {
-      height: auto;
       min-height: 100vh;
-      padding: 90px 0 120px;
+      padding: 90px 16px 130px;
     }
     .triptych-strip,
     .diptych-strip {
       grid-template-columns: 1fr;
-      grid-template-rows: none;
-      gap: 12px;
-      padding: 0 12px;
+      gap: 14px;
+      max-width: 100%;
     }
-    .triptych-cell, .diptych-cell, .saga-col .saga-photo {
-      height: 50vh;
-      min-height: 360px;
-    }
+    .triptych-cell { aspect-ratio: 4 / 3; }
+    .diptych-cell  { aspect-ratio: 3 / 4; max-height: none; }
+    .saga-col .saga-photo { aspect-ratio: 3 / 4; max-height: none; }
     .saga-col {
       gap: 10px;
       margin-bottom: 22px;
@@ -1127,6 +1228,153 @@
 </nav>
 
 <script>
+/* === CALIBRATION MODE ===
+   Visit `?adjust=1` to enter. Drag any photo to reposition. Right-click
+   resets that photo. Export CSS dumps current positions to a textarea
+   you can copy. Saved positions persist in localStorage and apply even
+   in non-adjust mode, so you can preview your tweaks live.
+*/
+(function () {
+  const STATE_KEY = 'hello-sade-photo-positions-v1';
+  const ADJUST = new URLSearchParams(location.search).has('adjust');
+  const PHOTO_SEL = '.photo-half img, .triptych-cell img, .diptych-cell img, .saga-col .saga-photo img';
+
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(STATE_KEY) || '{}'); } catch (e) { state = {}; }
+
+  function applyAll() {
+    document.querySelectorAll(PHOTO_SEL).forEach(img => {
+      const v = state[img.getAttribute('src')];
+      if (v) img.style.objectPosition = `${v.x.toFixed(1)}% ${v.y.toFixed(1)}%`;
+    });
+  }
+  applyAll();
+
+  if (!ADJUST) return;
+
+  document.body.classList.add('adjust');
+
+  // Suppress click-to-advance after a drag
+  let suppressClick = false;
+  document.addEventListener('click', e => {
+    if (suppressClick) {
+      e.stopPropagation();
+      e.preventDefault();
+      suppressClick = false;
+    }
+  }, true);
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  function startDrag(e) {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const img = e.currentTarget;
+    img.classList.add('dragging');
+    const rect = img.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const key = img.getAttribute('src');
+    const computed = state[key] || readComputed(img);
+    const startX = computed.x, startY = computed.y;
+    let moved = false;
+
+    function move(ev) {
+      const dx = ev.clientX - sx;
+      const dy = ev.clientY - sy;
+      if (!moved && (Math.abs(dx) > 2 || Math.abs(dy) > 2)) moved = true;
+      // Drag-the-photo model: drag right -> photo shifts right -> see more LEFT -> x decreases
+      const newX = clamp(startX - (dx / rect.width)  * 100, 0, 100);
+      const newY = clamp(startY - (dy / rect.height) * 100, 0, 100);
+      state[key] = { x: newX, y: newY };
+      img.style.objectPosition = `${newX.toFixed(1)}% ${newY.toFixed(1)}%`;
+    }
+    function up() {
+      img.classList.remove('dragging');
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+      if (moved) {
+        suppressClick = true;
+        localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        renderStatus();
+      }
+    }
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
+  }
+
+  function readComputed(img) {
+    const cs = getComputedStyle(img).objectPosition.split(/\s+/);
+    const parsePct = (v) => v.endsWith('%') ? parseFloat(v) : 50;
+    return { x: parsePct(cs[0] || '50%'), y: parsePct(cs[1] || '50%') };
+  }
+
+  function resetImg(e) {
+    e.preventDefault();
+    const img = e.currentTarget;
+    const key = img.getAttribute('src');
+    delete state[key];
+    img.style.objectPosition = '';
+    localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    renderStatus();
+  }
+
+  document.querySelectorAll(PHOTO_SEL).forEach(img => {
+    img.addEventListener('mousedown', startDrag);
+    img.addEventListener('contextmenu', resetImg);
+    img.addEventListener('dragstart', e => e.preventDefault());
+    img.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // Build panel
+  const panel = document.createElement('div');
+  panel.id = 'cal-panel';
+  panel.innerHTML = `
+    <h4>Adjust Mode</h4>
+    <p>Drag a photo to reposition.<br>Right-click to reset that photo.<br>Changes persist locally.</p>
+    <p id="cal-status"></p>
+    <button id="cal-export">Export CSS</button>
+    <button id="cal-clear">Reset all photos</button>
+    <button id="cal-exit">Exit adjust mode</button>
+  `;
+  document.body.appendChild(panel);
+
+  function renderStatus() {
+    const n = Object.keys(state).length;
+    document.getElementById('cal-status').textContent = n + ' photo' + (n === 1 ? '' : 's') + ' adjusted';
+  }
+  renderStatus();
+
+  document.getElementById('cal-export').addEventListener('click', () => {
+    const lines = Object.entries(state)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([key, v]) => `img[src="${key}"] { object-position: ${v.x.toFixed(1)}% ${v.y.toFixed(1)}%; }`);
+    const out = lines.length ? lines.join('\n') : '/* no adjustments yet */';
+    let ta = document.getElementById('cal-export-out');
+    if (ta) ta.remove();
+    ta = document.createElement('textarea');
+    ta.id = 'cal-export-out';
+    ta.value = out;
+    ta.readOnly = true;
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.addEventListener('blur', () => ta.remove(), { once: true });
+  });
+
+  document.getElementById('cal-clear').addEventListener('click', () => {
+    if (!confirm('Reset all photo positions?')) return;
+    state = {};
+    localStorage.removeItem(STATE_KEY);
+    document.querySelectorAll(PHOTO_SEL).forEach(img => { img.style.objectPosition = ''; });
+    renderStatus();
+  });
+
+  document.getElementById('cal-exit').addEventListener('click', () => {
+    location.href = location.pathname + location.hash;
+  });
+})();
+
 (function () {
   const slides = Array.from(document.querySelectorAll('.slide'));
   const total = slides.length;
