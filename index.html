@@ -292,9 +292,15 @@
     line-height: 1.5;
   }
 
+  /* `auto auto auto` (instead of `1fr 1fr 1fr`) makes tracks size to
+     the cells' actual rendered width — important because aspect-ratio
+     + max-height can shrink cells below their fr-share, leaving them
+     anchored to the left of an oversized track. `justify-content:
+     center` then centers the (now content-sized) tracks as a group. */
   .triptych-strip {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto auto auto;
+    justify-content: center;
     gap: 14px;
     width: 1180px;
     max-width: calc(100% - 48px);
@@ -308,6 +314,7 @@
     border-radius: 2px;
     aspect-ratio: 1 / 1;
     max-height: 55vh;
+    min-width: 0;
   }
   .triptych-cell img {
     width: 100%;
@@ -332,10 +339,10 @@
   }
 
   /* Vacuum saga: portrait-aspect frames so all three
-     vacuum photos (which are taller than wide) show heads + feet. */
-  .slide.triptych.saga .triptych-strip {
-    max-width: 1180px;
-  }
+     vacuum photos (which are taller than wide) show heads + feet.
+     The base .triptych-strip rule already gives us width: 1180px
+     with the calc(100% - 48px) safety net, so no override needed
+     here — just style the inner saga columns. */
   .saga-col {
     display: flex;
     flex-direction: column;
@@ -408,7 +415,8 @@
   }
   .diptych-strip {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
+    justify-content: center;
     gap: 18px;
     width: 980px;
     max-width: calc(100% - 48px);
@@ -422,6 +430,7 @@
     border-radius: 2px;
     aspect-ratio: 3 / 4;
     max-height: 62vh;
+    min-width: 0;
   }
   .diptych-cell img {
     width: 100%;
